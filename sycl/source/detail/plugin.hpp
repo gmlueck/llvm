@@ -74,7 +74,8 @@ public:
 #endif
     if (pi::trace(pi::TraceLevel::PI_TRACE_CALLS)) {
       std::string FnName = PiCallInfo.getFuncName();
-      std::cout << "---> " << FnName << "(" << std::endl;
+      const char *PluginName = MPlugin->Targets;
+      std::cout << "---> " << PluginName << " " << FnName << "(" << std::endl;
       RT::printArgs(Args...);
     }
     RT::PiResult R = PiCallInfo.getFuncPtr(MPlugin)(Args...);

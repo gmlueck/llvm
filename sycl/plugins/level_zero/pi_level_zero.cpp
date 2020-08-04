@@ -4087,6 +4087,7 @@ pi_result piPluginInit(pi_plugin *PluginInit) {
   size_t PluginVersionSize = sizeof(PluginInit->PluginVersion);
   assert(strlen(_PI_H_VERSION_STRING) < PluginVersionSize);
   strncpy(PluginInit->PluginVersion, _PI_H_VERSION_STRING, PluginVersionSize);
+  PluginInit->Targets = "[L0]";
 
 #define _PI_API(api)                                                           \
   (PluginInit->PiFunctionTable).api = (decltype(&::api))(&api);
