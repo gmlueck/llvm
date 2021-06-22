@@ -618,7 +618,7 @@ In more details, the tool performs the following actions:
    - checks if there is the `SYCL/image-requirements` property
    - if no, copies current row to the output file table and goes to the next
    - if yes, checks if all the requirements listed in the property are supported
-     by the target architecture as specified in the device configuration file
+     by the target architecture as specified by entry `E` in the device configuration file
        - if yes, copies current row to the output file table and goes to the
          next
        - otherwise skips this row
