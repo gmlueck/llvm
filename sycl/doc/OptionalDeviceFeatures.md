@@ -596,13 +596,16 @@ This tool transforms an input file table by removing rows with device code files
 that use features unsupported for the target architecture given as tool's
 argument.
 
+*Name*:
+- `sycl-aspect-filter`, located next to other tools like `file-table-tform`
+
 *Input*:
 - file table, normally coming out of `sycl-post-link` or `file-table-tform`
   tools
 
 *Command line arguments*
-- target device architecture to filter for
-- path to the device configuration file
+- `-target=<target>` target device architecture to filter for
+- `-device-config-file=<path>` path to the device configuration file
 
 *Output*
 - the input file table filtered as needed
@@ -631,6 +634,35 @@ located in the TBD directory. Users may override the defalt using the
 -fsycl-device-config-file=<path>
 ```
 option.
+
+##### AOT target identification
+
+There are several user-visible places in the SDK where SYCL device target
+architectures need to be identified:
+- `-fsycl-targets` option
+- a device configuration file entry
+- `-target` option of the `sycl-aspec-filter` tool
+- a SYCL aspect enum identifier
+
+In all such places architecture naming should be the same. In some cases aliases
+are allowed. Below is a list of target architectures supported by DPC++:
+
+| target/alias(es) | description |
+|-|-|
+| fpga   | Generic Intel FPGA accelerator architecture |
+| gen    | Generic Intel Gen architecture |
+| gen_skl, gen_9_0| Intel 9.0 integrated graphics architecture |
+| gen_kbl, gen_9_1| Intel 9.1 integrated graphics architecture |
+| ptx64  | Generic 64-bit PTX target architecture |
+| spir64 | Generic 64-bit SPIR-V target |
+| x86_64 | Generic 64-bit x86 architecture |
+
+More targets TBD
+
+Example of clang compilation invocation with 3 AOT targets and generic SPIR-V:
+```
+clang++ -fsycl -fsycl-targets=spir64,gen_9_0,gen_kbl,ptx64 ...
+```
 
 ### Changes to the DPC++ runtime
 
