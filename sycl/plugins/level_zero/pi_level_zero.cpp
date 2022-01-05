@@ -3800,7 +3800,7 @@ pi_result piProgramLink(pi_context Context, pi_uint32 NumDevices,
     ErrorMessage.append(Options);
     ErrorMessage.push_back('\"');
     pi_program Program =
-        new _pi_program(_pi_program::Invalid, Context, ErrorMessage);
+        new _pi_program(_pi_program::Invalid, Context, Options, ErrorMessage);
     *RetProgram = Program;
     return PI_LINK_PROGRAM_FAILURE;
   }
@@ -3920,7 +3920,8 @@ pi_result piProgramLink(pi_context Context, pi_uint32 NumDevices,
 
     _pi_program::state State =
         (PiResult == PI_SUCCESS) ? _pi_program::Exe : _pi_program::Invalid;
-    *RetProgram = new _pi_program(State, Context, ZeModule, ZeBuildLog);
+    *RetProgram =
+        new _pi_program(State, Context, ZeModule, ZeBuildLog, Options);
   } catch (const std::bad_alloc &) {
     return PI_OUT_OF_HOST_MEMORY;
   } catch (...) {
@@ -4031,6 +4032,8 @@ pi_result piProgramBuild(pi_program Program, pi_uint32 NumDevices,
   // We no longer need the IL / native code.
   Program->Code.reset();
 
+  if (Options)
+    Program->BuildFlags = Options;
   Program->ZeModule = ZeModule;
   Program->State = _pi_program::Exe;
 
@@ -4055,12 +4058,7 @@ pi_result piProgramGetBuildInfo(pi_program Program, pi_device Device,
     return ReturnValue(cl_program_binary_type{Type});
   }
   if (ParamName == CL_PROGRAM_BUILD_OPTIONS) {
-    // TODO: how to get module build options out of Level Zero?
-    // For the programs that we compiled we can remember the options
-    // passed with piProgramCompile/piProgramBuild, but what can we
-    // return for programs that were built outside and registered
-    // with piProgramRegister?
-    return ReturnValue("");
+    return ReturnValue(Program->BuildFlags.c_str());
   } else if (ParamName == CL_PROGRAM_BUILD_LOG) {
     // Check first to see if the plugin code recorded an error message.
     if (!Program->ErrorMessage.empty()) {

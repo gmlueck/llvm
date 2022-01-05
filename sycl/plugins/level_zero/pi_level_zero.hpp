@@ -1065,9 +1065,12 @@ struct _pi_program : _pi_object {
 
   // Construct a program in Exe or Invalid state.
   _pi_program(state St, pi_context Context, ze_module_handle_t ZeModule,
-              ze_module_build_log_handle_t ZeBuildLog)
+              ze_module_build_log_handle_t ZeBuildLog, const char *Options)
       : Context{Context}, OwnZeModule{true}, State{St}, ZeModule{ZeModule},
-        ZeBuildLog{ZeBuildLog} {}
+        ZeBuildLog{ZeBuildLog} {
+    if (Options)
+      BuildFlags = Options;
+  }
 
   // Construct a program in Exe state (interop).
   _pi_program(state St, pi_context Context, ze_module_handle_t ZeModule,
@@ -1076,9 +1079,13 @@ struct _pi_program : _pi_object {
         ZeModule{ZeModule}, ZeBuildLog{nullptr} {}
 
   // Construct a program in Invalid state with a custom error message.
-  _pi_program(state St, pi_context Context, const std::string &ErrorMessage)
+  _pi_program(state St, pi_context Context, const char *Options,
+              const std::string &ErrorMessage)
       : Context{Context}, OwnZeModule{true}, ErrorMessage{ErrorMessage},
-        State{St}, ZeModule{nullptr}, ZeBuildLog{nullptr} {}
+        State{St}, ZeModule{nullptr}, ZeBuildLog{nullptr} {
+    if (Options)
+      BuildFlags = Options;
+  }
 
   ~_pi_program();
 
@@ -1109,8 +1116,8 @@ struct _pi_program : _pi_object {
   // maintaining the storage of this buffer.
   std::unordered_map<uint32_t, const void *> SpecConstants;
 
-  // Used only in Object state.  Contains the build flags from the last call to
-  // piProgramCompile().
+  // Used only in Object and Exe states.  Contains the build flags from the
+  // last call to piProgramCompile() or piProgramLink().
   std::string BuildFlags;
 
   // The Level Zero module handle.  Used primarily in Exe state.
