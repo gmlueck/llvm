@@ -1,0 +1,2 @@
+link:../supported/sycl_ext_oneapi_discard_queue_events.asciidoc[
+(click to see spec)].

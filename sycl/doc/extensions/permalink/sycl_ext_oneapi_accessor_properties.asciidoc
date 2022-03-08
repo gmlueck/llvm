@@ -1,0 +1,1 @@
+../supported/sycl_ext_oneapi_accessor_properties.asciidoc
